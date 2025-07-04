@@ -3,156 +3,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Ad - ZelGraz Bot</title>
+    <title>ZelGraz Bot - Watch Ad</title>
+    
+    <!-- Telegram Mini Apps SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+    
+    <!-- Adexium Widget Script -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            const adexiumWidget = new AdexiumWidget({wid: 'a9a8bb26-f778-4d69-8c58-e62579df193d', adFormat: 'interstitial'});
+            adexiumWidget.autoMode();
+        });
+    </script>
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            color: white;
         }
+        
         .container {
+            text-align: center;
             max-width: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 20px;
         }
-        .loading {
-            font-size: 18px;
+        
+        .logo {
+            font-size: 2.5rem;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .ad-container {
-            margin: 20px 0;
-            min-height: 200px;
-        }
-        .completion-message {
-            display: none;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        .verification-code {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-family: monospace;
-            font-size: 24px;
+        
+        .title {
+            font-size: 1.5rem;
             font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .ad-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .ad-placeholder {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 40px 20px;
+            margin: 15px 0;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .ad-placeholder.hidden {
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 10px;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+        }
+        
+        .button.secondary {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+        }
+        
+        .status {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .status.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .status.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        .status.info {
+            background: rgba(0, 150, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .gem-icon {
+            font-size: 1.2rem;
+            margin: 0 5px;
+        }
+        
+        .reward-info {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>📺 Watching Advertisement</h2>
-        <div class="loading">
-            <div class="spinner"></div>
-            Loading advertisement...
+        <div class="logo">🎮</div>
+        <h1 class="title">ZelGraz Bot</h1>
+        <p class="subtitle">Watch an advertisement to continue your adventure!</p>
+        
+        <div class="reward-info">
+            <p><span class="gem-icon">💎</span> <strong>Reward:</strong> Continue your mission or double your gems!</p>
         </div>
         
-        <div class="ad-container" id="adContainer">
-            <!-- Ad will be loaded here -->
+        <div class="ad-container">
+            <h3>Advertisement</h3>
+            <div id="ad-placeholder" class="ad-placeholder">
+                <div class="loading"></div>
+                <p>Loading advertisement...</p>
+            </div>
+            <div id="ad-content"></div>
         </div>
         
-        <div class="verification-code" id="verificationCode">
-            <!-- Verification code will be displayed here -->
+        <div id="status" class="status info" style="display: none;"></div>
+        
+        <button id="manual-ad-btn" class="button" onclick="showManualAd()">
+            🎯 Watch Advertisement
+        </button>
+        
+        <button id="verify-btn" class="button secondary" onclick="verifyAdWatched()" style="display: none;">
+            ✅ Verify & Continue
+        </button>
+        
+        <button id="debug-btn" class="button" onclick="toggleDebug()" style="background: linear-gradient(45deg, #636e72, #2d3436);">
+            🔧 Debug Info
+        </button>
+        
+        <div id="debug-panel" style="display: none; background: rgba(0,0,0,0.8); border-radius: 10px; padding: 15px; margin: 15px 0; font-family: monospace; font-size: 0.8rem; text-align: left;">
+            <h4>Debug Information:</h4>
+            <div id="debug-content"></div>
         </div>
         
-        <div class="completion-message" id="completionMessage">
-            ✅ Ad completed! You can now return to the bot and click "Verify Ad Watched".
+        <div class="footer">
+            <p>By watching this ad, you agree to our terms of service.</p>
+            <p>Powered by Adexium & Telegram Mini Apps</p>
         </div>
     </div>
 
-    <script type="text/javascript">
+    <script>
+        // Global variables - declare first
+        let tg = null;
+        let adexiumWidget = null;
+        let adWatched = false;
+        let adStartTime = null;
+        let adexiumInitialized = false;
+        
+        // Debug function - define first
+        function updateDebugInfo(message) {
+            const debugContent = document.getElementById('debug-content');
+            if (debugContent) {
+                const timestamp = new Date().toLocaleTimeString();
+                const debugLine = `[${timestamp}] ${message}<br>`;
+                debugContent.innerHTML += debugLine;
+                
+                // Keep only last 10 lines
+                const lines = debugContent.innerHTML.split('<br>');
+                if (lines.length > 10) {
+                    debugContent.innerHTML = lines.slice(-10).join('<br>');
+                }
+            }
+            console.log(`[DEBUG] ${message}`);
+        }
+        
+        // Initialize Telegram Mini App
+        tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        // Add initial debug info
+        updateDebugInfo('Page loaded');
+        updateDebugInfo(`Telegram WebApp version: ${tg.version}`);
+        updateDebugInfo(`Platform: ${tg.platform}`);
+        updateDebugInfo(`Color scheme: ${tg.colorScheme}`);
+        
+        // Set theme based on Telegram's theme
+        if (tg.colorScheme === 'dark') {
+            document.body.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+        }
+        
+        // Simple Adexium initialization - using the direct approach
         document.addEventListener('DOMContentLoaded', () => {
-            // Get verification code from URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const verificationCode = urlParams.get('code') || '0000';
+            updateDebugInfo('Page loaded, Adexium should auto-initialize');
             
-            // Display verification code
-            document.getElementById('verificationCode').textContent = `Code: ${verificationCode}`;
+            // Set up a simple verification system
+            setTimeout(() => {
+                // If no ad has been shown after 5 seconds, show test ad
+                if (!adWatched) {
+                    updateDebugInfo('No Adexium ad detected, showing test ad');
+                    showAlternativeAd();
+                }
+            }, 5000);
+        });
+        
+        function showManualAd() {
+            updateDebugInfo('Manual ad button clicked');
             
-            // Initialize Telegram Web App
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.ready();
-                window.Telegram.WebApp.expand();
+            // Try to trigger Adexium ad if available
+            if (typeof AdexiumWidget !== 'undefined') {
+                updateDebugInfo('Attempting to show Adexium ad');
+                try {
+                    const adexiumWidget = new AdexiumWidget({wid: 'a9a8bb26-f778-4d69-8c58-e62579df193d', adFormat: 'interstitial'});
+                    adexiumWidget.autoMode();
+                } catch (error) {
+                    updateDebugInfo(`Adexium error: ${error.message}`);
+                    showAlternativeAd();
+                }
+            } else {
+                updateDebugInfo('Adexium not available, showing test ad');
+                showAlternativeAd();
+            }
+        }
+        
+        function showAlternativeAd() {
+            // Create a more engaging test ad display
+            const adContent = document.getElementById('ad-content');
+            adContent.innerHTML = `
+                <div style="background: linear-gradient(45deg, #ff6b6b, #ee5a24); border-radius: 15px; padding: 25px; margin: 15px 0; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🎮</div>
+                    <h3 style="margin-bottom: 15px; font-size: 1.3rem;">ZelGraz Bot - Premium Experience</h3>
+                    <p style="margin-bottom: 20px; opacity: 0.9;">Experience the ultimate gaming adventure with exclusive missions, rewards, and challenges!</p>
+                    
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; margin: 15px 0;">
+                        <p style="margin: 5px 0;"><span style="color: #ffd700;">💎</span> Earn exclusive gems</p>
+                        <p style="margin: 5px 0;"><span style="color: #ffd700;">🏆</span> Compete on leaderboards</p>
+                        <p style="margin: 5px 0;"><span style="color: #ffd700;">🎯</span> Complete epic missions</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; margin: 15px 0;">
+                        <p style="margin: 5px 0; font-size: 0.9rem;">Watch time: <span id="watch-timer" style="font-weight: bold; color: #ffd700;">0</span> seconds</p>
+                        <p style="margin: 5px 0; font-size: 0.8rem; opacity: 0.8;">Minimum required: 10 seconds</p>
+                    </div>
+                    
+                    <button onclick="completeTestAd()" style="background: linear-gradient(45deg, #00b894, #00cec9); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+                        ✅ Complete Advertisement
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('ad-placeholder').classList.add('hidden');
+            adStartTime = Date.now();
+            adWatched = false;
+            
+            // Start timer
+            const timer = setInterval(() => {
+                const elapsed = Math.round((Date.now() - adStartTime) / 1000);
+                const timerElement = document.getElementById('watch-timer');
+                if (timerElement) {
+                    timerElement.textContent = elapsed;
+                }
+            }, 1000);
+            
+            // Store timer for cleanup
+            window.testAdTimer = timer;
+            
+            showStatus('Test advertisement loaded. Please watch for at least 10 seconds.', 'info');
+        }
+        
+        function completeTestAd() {
+            if (window.testAdTimer) {
+                clearInterval(window.testAdTimer);
             }
             
-            // Initialize Adexium ad
-            const adexiumWidget = new AdexiumWidget({
-                wid: 'bae49095-d302-4c9b-87dd-b50973327ff9', 
-                adFormat: 'interstitial'
-            });
+            const watchTime = Date.now() - adStartTime;
+            if (watchTime >= 10000) { // At least 10 seconds
+                adWatched = true;
+                showStatus(`Test advertisement completed! Watch time: ${Math.round(watchTime/1000)}s`, 'success');
+                document.getElementById('verify-btn').style.display = 'inline-block';
+                document.getElementById('manual-ad-btn').style.display = 'none';
+            } else {
+                showStatus('Please watch the advertisement for at least 10 seconds.', 'error');
+            }
+        }
+        
+        function toggleDebug() {
+            const debugPanel = document.getElementById('debug-panel');
+            const isVisible = debugPanel.style.display !== 'none';
+            debugPanel.style.display = isVisible ? 'none' : 'block';
             
-            // Show loading initially
-            document.querySelector('.loading').style.display = 'block';
-            
-            // Initialize the ad
-            adexiumWidget.init();
-            
-            // Listen for ad events
-            adexiumWidget.on('adLoaded', () => {
-                console.log('Ad loaded successfully');
-                document.querySelector('.loading').style.display = 'none';
-            });
-            
-            adexiumWidget.on('adCompleted', () => {
-                console.log('Ad completed');
-                document.querySelector('.loading').style.display = 'none';
-                document.querySelector('.completion-message').style.display = 'block';
+            if (!isVisible) {
+                updateDebugInfo('Debug panel opened');
+            }
+        }
+        
+
+        
+        function verifyAdWatched() {
+            if (adWatched) {
+                // Send verification to bot
+                const verificationData = {
+                    action: 'ad_verified',
+                    timestamp: Date.now(),
+                    watchTime: adStartTime ? Date.now() - adStartTime : 0
+                };
                 
-                // Notify the bot that ad is completed
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.sendData('ad_completed');
-                }
-            });
-            
-            adexiumWidget.on('adError', (error) => {
-                console.error('Ad error:', error);
-                document.querySelector('.loading').innerHTML = 
-                    '<div class="spinner"></div>Ad failed to load. Please try again.';
+                // Send data back to Telegram bot
+                tg.sendData(JSON.stringify(verificationData));
                 
-                // Show completion message anyway after 5 seconds
+                showStatus('Verification sent! Returning to bot...', 'success');
+                
+                // Close the Mini App after a short delay
                 setTimeout(() => {
-                    document.querySelector('.loading').style.display = 'none';
-                    document.querySelector('.completion-message').style.display = 'block';
-                }, 5000);
-            });
+                    tg.close();
+                }, 2000);
+                
+            } else {
+                showStatus('Please watch the full advertisement before verifying.', 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
             
-            // Fallback: if no ad events fire within 10 seconds, assume completion
+            // Auto-hide after 5 seconds
             setTimeout(() => {
-                if (document.querySelector('.completion-message').style.display === 'none') {
-                    document.querySelector('.loading').style.display = 'none';
-                    document.querySelector('.completion-message').style.display = 'block';
-                    
-                    if (window.Telegram && window.Telegram.WebApp) {
-                        window.Telegram.WebApp.sendData('ad_completed');
-                    }
-                }
-            }, 10000);
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Handle back button
+        tg.BackButton.onClick(() => {
+            tg.close();
+        });
+        
+        // Show back button
+        tg.BackButton.show();
+        
+        // Handle theme changes
+        tg.onEvent('themeChanged', () => {
+            if (tg.colorScheme === 'dark') {
+                document.body.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        });
+        
+        // Handle viewport changes
+        tg.onEvent('viewportChanged', () => {
+            tg.expand();
+        });
+        
+        // Error handling
+        window.addEventListener('error', (event) => {
+            console.error('Page error:', event.error);
+            showStatus('An error occurred. Please try again.', 'error');
+        });
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && adStartTime && !adWatched) {
+                showStatus('Advertisement paused. Please return to complete watching.', 'info');
+            }
         });
     </script>
 </body>
