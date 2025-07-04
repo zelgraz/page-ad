@@ -3,111 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZelGraz Bot - Watch Ad</title>
-    <script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="346483"></script>
+    <title>ZelGraz Bot - Ad Verification</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            padding: 20px;
         }
+
         .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
             text-align: center;
-            max-width: 400px;
-            padding: 20px;
-        }
-        .logo {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        .title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-        .subtitle {
-            font-size: 1rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-            line-height: 1.4;
-        }
-        .ad-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .ad-placeholder {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 40px 20px;
-            margin: 15px 0;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            min-height: 120px;
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
         }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .status {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .status h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .status p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .ad-container {
+            margin: 30px 0;
+            min-height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fafafa;
+        }
+
+        .ad-placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .debug-info {
+            background: #f1f3f4;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 12px;
+            color: #333;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-info h4 {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .warning {
+            color: #ffc107;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .button {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 24px;
             border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             margin: 10px;
         }
+
         .button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        .button:active {
-            transform: translateY(0);
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 0.8rem;
-            opacity: 0.7;
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🎮</div>
-        <h1 class="title">ZelGraz Bot</h1>
-        <p class="subtitle">Watch an advertisement to continue your adventure!</p>
-        <div class="ad-container">
-            <h3>Advertisement</h3>
-            <div id="onclick-ad" class="ad-placeholder" style="cursor:pointer;">
-                <p>Click the button below to view the advertisement and continue your adventure!</p>
+        <div class="logo">ZG</div>
+        <h1>ZelGraz Bot</h1>
+        <p class="subtitle">Ad Verification in Progress</p>
+
+        <div class="status">
+            <h3>Verification Status</h3>
+            <p>Please wait while we verify your ad interaction. This helps us maintain quality and prevent abuse.</p>
+        </div>
+
+        <div class="timer" id="timer">17</div>
+
+        <div class="ad-container" id="adContainer">
+            <div class="ad-placeholder">
+                <div class="loading"></div>
+                <p>Loading advertisements...</p>
             </div>
         </div>
-        <button id="manual-ad-btn" class="button">
-            🎯 Watch Advertisement
-        </button>
-        <div class="footer">
-            <p>By watching this ad, you agree to our terms of service.</p>
-            <p>Powered by OnClickAd Network</p>
+
+        <button class="button" id="refreshBtn" onclick="refreshAds()">Refresh Ads</button>
+        <button class="button" id="debugBtn" onclick="toggleDebug()">Toggle Debug Info</button>
+
+        <div class="debug-info" id="debugInfo" style="display: none;">
+            <h4>Debug Information</h4>
+            <div id="debugContent"></div>
         </div>
     </div>
+
+    <!-- Onclick Ad Script -->
+    <script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="346489"></script>
+
     <script>
-        // The onclick ad script will handle the ad display automatically on user interaction
-        document.getElementById('manual-ad-btn').addEventListener('click', function() {
-            // The ad script will trigger the ad popup automatically
+        let timeLeft = 17;
+        let timerInterval;
+        let debugMode = false;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('Page loaded', 'success');
+            logDebug('Onclick ad script loaded with ID: 346489', 'success');
+            startTimer();
+            initializeAds();
         });
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    logDebug('Timer completed - verification should be complete', 'success');
+                    document.getElementById('timer').textContent = 'Complete!';
+                    document.getElementById('timer').style.color = '#28a745';
+                }
+            }, 1000);
+        }
+
+        function initializeAds() {
+            logDebug('Initializing ad system...', 'warning');
+            
+            // Check if onclick script is loaded
+            if (typeof window.onclicka !== 'undefined') {
+                logDebug('Onclick ad system detected', 'success');
+                logDebug('Ad types supported: Banner, Web-push, Inpage, Video/In-stream', 'success');
+            } else {
+                logDebug('Onclick ad system not detected yet', 'warning');
+                // Retry after a short delay
+                setTimeout(() => {
+                    if (typeof window.onclicka !== 'undefined') {
+                        logDebug('Onclick ad system now detected', 'success');
+                    } else {
+                        logDebug('Onclick ad system failed to load', 'error');
+                    }
+                }, 2000);
+            }
+
+            // Monitor for ad events
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type) {
+                    logDebug(`Ad event: ${event.data.type}`, 'success');
+                }
+            });
+
+            // Check for ad elements periodically
+            setTimeout(checkForAds, 3000);
+        }
+
+        function checkForAds() {
+            const adElements = document.querySelectorAll('[id*="ad"], [class*="ad"], iframe');
+            logDebug(`Found ${adElements.length} potential ad elements`, 'warning');
+            
+            adElements.forEach((element, index) => {
+                logDebug(`Ad element ${index + 1}: ${element.tagName} - ${element.id || element.className}`, 'warning');
+            });
+
+            // Update ad container
+            const adContainer = document.getElementById('adContainer');
+            if (adElements.length > 0) {
+                adContainer.innerHTML = `
+                    <div style="color: #28a745;">
+                        <p>✓ Advertisements loaded successfully</p>
+                        <p>Found ${adElements.length} ad element(s)</p>
+                    </div>
+                `;
+            } else {
+                adContainer.innerHTML = `
+                    <div style="color: #ffc107;">
+                        <p>⚠ No ad elements detected yet</p>
+                        <p>Ads may be loading in background</p>
+                    </div>
+                `;
+            }
+        }
+
+        function refreshAds() {
+            logDebug('Refreshing ads...', 'warning');
+            location.reload();
+        }
+
+        function toggleDebug() {
+            debugMode = !debugMode;
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.style.display = debugMode ? 'block' : 'none';
+            
+            if (debugMode) {
+                logDebug('Debug mode enabled', 'success');
+                // Add system info
+                logDebug(`User Agent: ${navigator.userAgent}`, 'warning');
+                logDebug(`Screen: ${screen.width}x${screen.height}`, 'warning');
+                logDebug(`Viewport: ${window.innerWidth}x${window.innerHeight}`, 'warning');
+                logDebug(`URL: ${window.location.href}`, 'warning');
+            }
+        }
+
+        function logDebug(message, type = 'warning') {
+            const debugContent = document.getElementById('debugContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            debugContent.appendChild(logEntry);
+            
+            // Keep only last 20 entries
+            while (debugContent.children.length > 20) {
+                debugContent.removeChild(debugContent.firstChild);
+            }
+            
+            // Auto-scroll to bottom
+            debugContent.scrollTop = debugContent.scrollHeight;
+        }
+
+        // Error handling
+        window.addEventListener('error', function(event) {
+            logDebug(`JavaScript error: ${event.message}`, 'error');
+        });
+
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            const loadTime = performance.now();
+            logDebug(`Page load time: ${loadTime.toFixed(2)}ms`, 'success');
+        });
+
+        // Check for onclick ad system periodically
+        setInterval(() => {
+            if (typeof window.onclicka !== 'undefined') {
+                logDebug('Onclick ad system is active', 'success');
+            }
+        }, 10000);
     </script>
 </body>
 </html>
