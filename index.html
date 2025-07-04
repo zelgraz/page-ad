@@ -2,29 +2,407 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Adexium Widget Test</title>
-    <script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZelGraz Bot - Ad Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            animation: rainbow 3s ease-in-out infinite;
+        }
+
+        @keyframes rainbow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(100%); }
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .ad-container {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .ad-container:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .ad-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ad-icon {
+            font-size: 3rem;
+            color: #667eea;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .ad-text {
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .verification-code {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .instructions {
+            background: #e8f4fd;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .instructions ol {
+            color: #555;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .status.waiting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .close-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .close-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .close-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .verification-code {
+                font-size: 1.1rem;
+                padding: 12px 20px;
+            }
+        }
+    </style>
 </head>
-<body style="display: flex; align-items: center; justify-content: center; height: 100vh; background: #f5f6fa;">
-    <div style="text-align: center;">
-        <h2>Adexium Widget Test</h2>
-        <p>If the widget is working, you should see an ad below.</p>
-        <div id="adexium-ad"></div>
+<body>
+    <div class="container">
+        <div class="logo">🤖 ZelGraz Bot</div>
+        <h1 class="title">Ad Verification Required</h1>
+        <p class="subtitle">Please watch the advertisement below to continue with your mission</p>
+        
+        <div class="ad-container">
+            <div class="ad-placeholder">
+                <div class="ad-icon">📺</div>
+                <div class="ad-text">Advertisement Content</div>
+                <div class="timer" id="timer">Time remaining: <span id="timeLeft">17</span>s</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verification-code" id="verificationCode">Loading...</div>
+        
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Watch the advertisement content above</li>
+                <li>Wait for the timer to complete (17 seconds)</li>
+                <li>Return to Telegram and click "Verify"</li>
+                <li>Continue with your mission!</li>
+            </ol>
+        </div>
+
+        <div class="status waiting" id="status">
+            ⏳ Waiting for you to watch the advertisement...
+        </div>
+
+        <button class="close-button" id="closeButton" onclick="closeWindow()">
+            ✅ I've Watched the Ad
+        </button>
+
+        <div class="footer">
+            <p>Thank you for supporting ZelGraz Bot! 🚀</p>
+            <p>This verification helps keep our services free.</p>
+        </div>
     </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const adexiumWidget = new AdexiumWidget({
-                    wid: 'a9a8bb26-f778-4d69-8c58-e62579df193d',
-                    adFormat: 'interstitial'
-                });
-                adexiumWidget.autoMode();
-                console.log('AdexiumWidget initialized');
-            } catch (e) {
-                console.error('AdexiumWidget error:', e);
-                document.body.innerHTML += '<p style="color:red;">AdexiumWidget error: ' + e.message + '</p>';
+        // Get verification code from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const verificationCode = urlParams.get('code');
+        
+        // Display verification code
+        document.getElementById('verificationCode').textContent = verificationCode || 'NO-CODE';
+        
+        // Timer functionality
+        let timeLeft = 17;
+        const timerElement = document.getElementById('timeLeft');
+        const progressFill = document.getElementById('progressFill');
+        const statusElement = document.getElementById('status');
+        const closeButton = document.getElementById('closeButton');
+        
+        // Disable close button initially
+        closeButton.disabled = true;
+        
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            // Update progress bar
+            const progress = ((17 - timeLeft) / 17) * 100;
+            progressFill.style.width = progress + '%';
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                timerElement.textContent = '0';
+                progressFill.style.width = '100%';
+                
+                // Enable close button and update status
+                closeButton.disabled = false;
+                statusElement.className = 'status completed';
+                statusElement.innerHTML = '✅ Advertisement watched! You can now return to Telegram.';
+                
+                // Add success animation
+                closeButton.style.animation = 'pulse 1s ease-in-out';
+            }
+        }, 1000);
+        
+        // Close window function
+        function closeWindow() {
+            // Try to close the window (works in some browsers)
+            window.close();
+            
+            // Fallback: show message
+            setTimeout(() => {
+                alert('Please return to Telegram and click "Verify" to continue with your mission!');
+            }, 100);
+        }
+        
+        // Prevent accidental closing
+        window.addEventListener('beforeunload', function(e) {
+            if (timeLeft > 0) {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? The advertisement must be watched to continue.';
             }
         });
+        
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effect to ad container
+            const adContainer = document.querySelector('.ad-container');
+            adContainer.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+            
+            // Add keyboard support
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && timeLeft <= 0) {
+                    closeWindow();
+                }
+            });
+        });
+        
+        // Add some visual feedback
+        let clickCount = 0;
+        document.addEventListener('click', function() {
+            clickCount++;
+            if (clickCount >= 5 && timeLeft > 0) {
+                // Show a friendly reminder
+                const reminder = document.createElement('div');
+                reminder.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #667eea;
+                    color: white;
+                    padding: 10px 15px;
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                reminder.textContent = '💡 Please watch the ad to continue!';
+                document.body.appendChild(reminder);
+                
+                setTimeout(() => {
+                    reminder.remove();
+                }, 3000);
+            }
+        });
+        
+        // Add CSS for slide-in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html> 
